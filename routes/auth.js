@@ -1,49 +1,52 @@
-const jwt = require('jsonwebtoken');
 const express = require('express');
-const bcrypt = require('bcrypt');
 const router = express.Router();
-const User = require('../models/user');
-const uuid = require('uuid');
+const { createUser, authenticateUser } = require('../helpers/auth');
 
-// Assuming this route exists for user registration
+router.get('/login', (req, res) => {
+    res.render('login.ejs', { title: 'Login' });
+});
+
+router.get('/register', (req, res) => {
+    res.render('signup.ejs', { title: 'Register' });
+})
+
+router.get('/logout', (req, res) => {
+    req.session.destroy(err => { // Destroy session
+        if (err) {
+            return res.status(400).send('Unable to log out');
+        }
+        res.redirect('/');
+    });
+});
+
 router.post('/register', async (req, res) => {
+    const { email, password } = req.body;
     try {
-        const hashedPassword = await bcrypt.hash(req.body.password, 10); // 10 is the salt rounds
-        const apiSecret = uuid.v4();
-        const user = new User({ 
-            email: req.body.email, 
-            password: hashedPassword,
-            apiSecret: apiSecret,
-            registeredDomain: req.body.registeredDomain
-        });
-        await user.save();
-        res.status(201).send('User created successfully');
-    } catch {
-        res.status(500).send();
+        const user = await createUser(email, password);
+        req.session.userId = user.id; // Store user's ID in session
+        req.session.isAuthenticated = true; // Mark session as authenticated
+        req.session.showMessage = true;
+        req.session.message = 'User created successfully';
+        res.redirect('/dashboard');
+    } catch (err) {
+        return res.status(400).send('Could not create user');
     }
 });
 
-// Updated login route with password verification
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
-    // Find the user by email
-    const user = await User.findOne({ email: email });
-    if (user == null) {
-        return res.status(400).send('Cannot find user');
-    }
+    // Authentication logic here...
+    const user = await authenticateUser(email, password);
 
-    try {
-        // Compare submitted password with the hashed password stored in the database
-        if (await bcrypt.compare(password, user.password)) {
-            // Generate a JWT if the password is correct
-            const accessToken = jwt.sign({ email: user.email }, process.env.ACCESS_TOKEN_SECRET);
-            res.json({ accessToken: accessToken });
-        } else {
-            res.send('Not Allowed');
-        }
-    } catch {
-        res.status(500).send();
+    if (user) {
+        req.session.userId = user.id; // Store user's ID in session
+        req.session.isAuthenticated = true; // Mark session as authenticated
+        req.session.showMessage = true;
+        req.session.message = 'Login successful';
+        res.redirect('/dashboard');
+    } else {
+        res.status(401).send('Login failed.');
     }
 });
 

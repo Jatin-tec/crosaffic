@@ -33,7 +33,6 @@ router.get('/get-advertisement-url', async (req, res) => {
 
         // Dynamically generate the script content
         const scriptContent = `
-        // Create and display the popup with the advertisement
         const adPopup = document.createElement('div');
         adPopup.innerHTML = \`<a href="${adUrl}">Check out this site!</a>\`;
         document.body.appendChild(adPopup);
