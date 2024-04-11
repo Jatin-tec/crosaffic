@@ -2,32 +2,33 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
+require('dotenv').config();
+const path = require('path');
+
+// Import routes
+const authRouter = require('./routes/auth')
+const cdnRouter = require('./routes/cdn')
+
 
 const app = express();
+
+mongoose.connect(process.env.MONGO_URI || "mongodb://rootuser:rootpass@localhost:27017/?authSource=admin")
+  .then(() => console.log('Connected to MongoDB'))
+  .catch(err => console.error('Could not connect to MongoDB...', err));
+
 app.use(cors());
 app.use(bodyParser.json());
 
-// Connect to MongoDB (ensure you replace 'your_database_uri' with your actual connection string)
-mongoose.connect('your_database_uri', { useNewUrlParser: true, useUnifiedTopology: true });
+app.set('/view', path.join(__dirname + '/templates'));
+app.use('/static', express.static(path.join(__dirname, '/public')));
 
-// Define a model for websites
-const Website = mongoose.model('Website', { url: String, advertisementUrl: String });
 
-// Route to add a website
-app.post('/add-website', async (req, res) => {
-    const { url, advertisementUrl } = req.body;
-    const website = new Website({ url, advertisementUrl });
-    await website.save();
-    res.send('Website added successfully.');
-});
+app.use('/auth', authRouter)
+app.use('/cdn', cdnRouter)
 
-// Route to generate script link (For simplicity, it just returns a static script URL in this example)
-app.get('/generate-script', (req, res) => {
-    res.send({ scriptUrl: 'http://yourserver.com/static/script.js' });
-});
 
 // Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
