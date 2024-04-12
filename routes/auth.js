@@ -44,9 +44,12 @@ router.post('/login', async (req, res) => {
         req.session.isAuthenticated = true; // Mark session as authenticated
         req.session.showMessage = true;
         req.session.message = 'Login successful';
-        res.redirect('/dashboard');
+
+        // Check if a return URL was provided
+        const returnUrl = req.query.returnUrl ? decodeURIComponent(req.query.returnUrl) : '/defaultRedirectPage';
+        return res.redirect(returnUrl);
     } else {
-        res.status(401).send('Login failed.');
+        res.redirect('/auth/login?error=invalidCredentials');
     }
 });
 

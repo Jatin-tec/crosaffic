@@ -9,6 +9,10 @@ const websiteSchema = new mongoose.Schema({
         type: String, 
         required: false 
     },
+    oneliner: {
+        type: String,
+        required: false
+    },
     logo: { 
         type: String, 
         required: false 
