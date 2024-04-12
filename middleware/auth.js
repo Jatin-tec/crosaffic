@@ -1,10 +1,21 @@
-function isAuthenticated(req, res, next) {
-    const isAuth = req.session.isAuthenticated || false; // Replace with your auth check
+const User = require('../models/user');
 
+async function isAuthenticated (req, res, next) {
+    const isAuth = req.session.isAuthenticated || false;
+    
     if (!isAuth) {
-        return res.status(403).send('You need to be authenticated to access this page');
+        const returnUrl = encodeURIComponent(req.originalUrl);
+        return res.redirect(`/auth/login?returnUrl=${returnUrl}`);
     }
-    next(); // User is authenticated, proceed to the next middleware/route handler
+
+    const userId = req.session.userId;
+    const user = await User.findById(userId);
+    if (!user) {
+        req.session.showMessage = true;
+        req.session.message = 'Please complete the setup to continue';
+    }
+    req.session.user = user;
+    next();
 }
 
 module.exports = isAuthenticated;

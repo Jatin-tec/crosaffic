@@ -7,7 +7,7 @@ const { getAdvertisementUrlForUser } = require('../helpers/getAdvertisementUrlFo
 
 var router = express.Router();
 
-router.get('/get-advertisement-url', async (req, res) => {
+router.get('/fetch-script', async (req, res) => {
     const { apiKey } = req.query;
     const requestOrigin = req.get('origin');
 
