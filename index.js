@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 const path = require('path');
-const session = require('express-session');
+const session = require('cookie-session');
 
 // Import routes
 const authRouter = require('./routes/auth')
