@@ -18,7 +18,7 @@ mongoose.connect(process.env.MONGO_URI || "mongodb://rootuser:rootpass@localhost
   .catch(err => console.error('Could not connect to MongoDB...', err));
 
 app.use(session({
-  secret: 'your_secret_key', // Secret key to sign the session ID cookie
+  secret: process.env.ACCESS_TOKEN_SECRET, // Secret key to sign the session ID cookie
   resave: false, // Do not force session to be saved back to the session store
   saveUninitialized: false, // Do not force uninitialized sessions to be saved
   cookie: { secure: process.env.NODE_ENV === 'production' } // Use secure cookies in production
