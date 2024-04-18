@@ -21,7 +21,6 @@ router.get('/fetch-script', async (req, res) => {
         if (!user) {
             return res.status(404).send('User not found');
         }
-
         
         // console.log(user.registeredDomain, requestOrigin);
 
@@ -39,6 +38,8 @@ router.get('/fetch-script', async (req, res) => {
         // Dynamically generate the script content
         const scriptContent = `
         const adPopup = document.createElement('div');
+        adPopup.style.position = "sticky";
+        adPopup.style.bottom = "2rem";
         adPopup.innerHTML = \`<a href="${adUrl}">Check out this site!</a>\`;
         adPopup.innerHTML = \`<div
         href="${adUrl}"
@@ -54,8 +55,6 @@ router.get('/fetch-script', async (req, res) => {
           padding: 0.2rem;
           border-radius: 50px;
           box-shadow: 0 0 1rem black;
-          position: sticky;
-          bottom: 30px;
           padding-inline-start: 1rem;
           padding-inline-end: 1rem;
           font-size: large;
