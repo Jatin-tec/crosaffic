@@ -35,7 +35,7 @@ router.get('/fetch-script', async (req, res) => {
         const adUrl = website.url
 
         if (!adUrl || !logo_url || !title) {
-          res.send('');
+          return res.send('');
         }
         
 
