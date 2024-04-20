@@ -20,8 +20,9 @@ mongoose.connect(process.env.MONGO_URI || "mongodb://rootuser:rootpass@localhost
 app.use(session({
   secret: process.env.ACCESS_TOKEN_SECRET, // Secret key to sign the session ID cookie
   resave: false, // Do not force session to be saved back to the session store
-  saveUninitialized: false, // Do not force uninitialized sessions to be saved
-  cookie: { secure: process.env.NODE_ENV === 'production' } // Use secure cookies in production
+  saveUninitialized: true, // Do not force uninitialized sessions to be saved
+  cookie: { secure: process.env.NODE_ENV === 'production' }, // Use secure cookies in production
+  maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
 }));
 
 app.use(cors());

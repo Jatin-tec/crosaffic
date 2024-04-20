@@ -42,7 +42,7 @@ router.post('/add-website', isAuthenticated, setLocal, async (req, res) => {
     if (!domain) {
         return res.render('setup.ejs', { message: 'Please provide a website URL' });
     }
-
+    
     const isInstalled = await verifyScriptInstallation(domain, res.locals.scriptUrl);
 
     if (isInstalled) {
@@ -94,6 +94,14 @@ router.post('/verify-domain', isAuthenticated, setLocal, async (req, res) => {
     } else {
         res.send("Script not found. Please ensure it is installed correctly.");
     }
+});
+
+router.get('/about', (req, res) => {
+    res.render('aboutus.ejs', { title: 'About' });
+});
+
+router.get('/profile', isAuthenticated, (req, res) => {
+    res.render('profile.ejs', { title: 'Profile' });
 });
 
 module.exports = router;

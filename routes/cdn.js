@@ -33,6 +33,10 @@ router.get('/fetch-script', async (req, res) => {
         const logo_url = website.logo
         const title = website.oneliner
         const adUrl = website.url
+
+        if (!adUrl || !logo_url || !title) {
+          res.send('');
+        }
         
 
         // Dynamically generate the script content

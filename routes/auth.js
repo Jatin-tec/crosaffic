@@ -31,12 +31,12 @@ router.get('/register', (req, res) => {
 })
 
 router.get('/logout', (req, res) => {
-    req.session.destroy(err => { // Destroy session
-        if (err) {
-            return res.status(400).send('Unable to log out');
-        }
-        res.redirect('/');
-    });
+    if (req.session) {
+        req.session = null
+        res.redirect('/auth/login');
+    } else {
+        res.redirect('/auth/login'); // Redirect if session does not exist
+    }
 });
 
 router.post('/register', async (req, res) => {
